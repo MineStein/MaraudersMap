@@ -1,0 +1,32 @@
+name: MaraudersMap
+version: 1.0.0
+main: me.tylergrissom.maraudersmap.Main
+
+commands:
+  maraudersmap:
+    description: MaraudersMap command.
+    aliases: [mm]
+
+permissions:
+  maraudersmap.maraudersmap:
+    description: Superpermission for all /maraudersmap sub-commands
+    default: op
+    children:
+      maraudersmap.maraudersmap.reload: true
+      maraudersmap.maraudersmap.discover: true
+      maraudersmap.maraudersmap.set: true
+      maraudersmap.maraudersmap.create: true
+  maraudersmap.maraudersmap.reload:
+    description: Reload the MaraudersMap plugin.
+    default: op
+  maraudersmap.maraudersmap.discover:
+    description: Forcibly discover a warp location.
+    default: op
+  maraudersmap.maraudersmap.set:
+    description: Set an attribute of a warp
+    default: op
+  maraudersmap.maraudersmap.create:
+    description: Create a new warp
+    default: op
+
+depend: [WorldEdit, Magic, EffectLib]

@@ -1,0 +1,40 @@
+starterWarp: hagridshut
+
+players:
+  uuid:
+    - hagridshut
+
+warps:
+  hagridshut:
+    item:
+      display-name: '&7Hagrids Hut'
+      material: PUMPKIN
+      amount: 1
+      lore:
+        - '&7Come in for a fresh'
+        - '&7treacle tart'
+    warp-message: ''
+    warp-commands:
+      player:
+        - ''
+      server:
+        - ''
+    enabled: true
+    discoverable: true
+    required-permission: ''
+    warp-location:
+      world: 'world'
+      x: 0
+      y: 0
+      z: 0
+    discover-region:
+      point-one:
+        world: 'world'
+        x: 0
+        y: 0
+        z: 0
+      point-two:
+        world: 'world'
+        x: 0
+        y: 0
+        z: 0
