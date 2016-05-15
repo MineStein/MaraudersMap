@@ -53,66 +53,73 @@ public class InventoryListener implements Listener {
 
                             return;
                         } else {
-                            if (!warpingQueue.contains(player.getUniqueId().toString())) {
-                                player.closeInventory();
-                                player.sendMessage("§7Warping in §e5 seconds§7...");
+                            String requiredPermission = section.getString("required-permission");
 
-                                WarpEffect warpEffect = new WarpEffect(plugin.getEffectManager());
+                            if (section.getString("required-permission") == null || requiredPermission.equals("") || player.hasPermission(requiredPermission)) {
+                                if (!warpingQueue.contains(player.getUniqueId().toString())) {
+                                    player.closeInventory();
+                                    player.sendMessage("§7Warping in §e5 seconds§7...");
 
-                                warpEffect.duration = 2000;
-                                warpEffect.period = 3;
-                                warpEffect.particle = ParticleEffect.FIREWORKS_SPARK;
-                                warpEffect.particles = 20;
-                                warpEffect.iterations = 200;
-                                warpEffect.radius = 1;
-                                warpEffect.rings = 100;
+                                    WarpEffect warpEffect = new WarpEffect(plugin.getEffectManager());
 
-                                warpEffect.setEntity(player);
+                                    warpEffect.duration = 2000;
+                                    warpEffect.period = 3;
+                                    warpEffect.particle = ParticleEffect.FIREWORKS_SPARK;
+                                    warpEffect.particles = 20;
+                                    warpEffect.iterations = 200;
+                                    warpEffect.radius = 1;
+                                    warpEffect.rings = 100;
 
-                                warpEffect.start();
+                                    warpEffect.setEntity(player);
 
-                                warpingQueue.add(player.getUniqueId().toString());
+                                    warpEffect.start();
 
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 20, false, false));
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 100, -20, false, false));
+                                    warpingQueue.add(player.getUniqueId().toString());
 
-                                Bukkit.getScheduler().runTaskLater(plugin, new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                        player.sendMessage("§7Fast travelling to §e" + ChatColor.translateAlternateColorCodes('&', section.getString("item.display-name")));
-                                        player.teleport(location);
+                                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 20, false, false));
+                                    player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 100, -20, false, false));
 
-                                        warpingQueue.remove(player.getUniqueId().toString());
+                                    Bukkit.getScheduler().runTaskLater(plugin, new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            player.sendMessage("§7Fast travelling to §e" + ChatColor.translateAlternateColorCodes('&', section.getString("item.display-name")));
+                                            player.teleport(location);
 
-                                        String warpMessage = section.getString("warp-message");
-                                        List<String> serverCommands = section.getStringList("warp-commands.server");
-                                        List<String> playerCommands = section.getStringList("warp-commands.player");
+                                            warpingQueue.remove(player.getUniqueId().toString());
 
-                                        if (serverCommands != null && serverCommands.size() > 0) {
-                                            List<String> newServerCommands = new ArrayList<>();
+                                            String warpMessage = section.getString("warp-message");
+                                            List<String> serverCommands = section.getStringList("warp-commands.server");
+                                            List<String> playerCommands = section.getStringList("warp-commands.player");
 
-                                            for (int i = 0; i < serverCommands.size(); i++) {
-                                                if (!serverCommands.get(i).equals("")) newServerCommands.add(serverCommands.get(i).replaceAll("%player%", player.getName()));
+                                            if (serverCommands != null && serverCommands.size() > 0) {
+                                                List<String> newServerCommands = new ArrayList<>();
+
+                                                for (int i = 0; i < serverCommands.size(); i++) {
+                                                    if (!serverCommands.get(i).equals("")) newServerCommands.add(serverCommands.get(i).replaceAll("%player%", player.getName()));
+                                                }
+
+                                                for (int i = 0; i < newServerCommands.size(); i++) {
+                                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), newServerCommands.get(i));
+                                                }
                                             }
 
-                                            for (int i = 0; i < newServerCommands.size(); i++) {
-                                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), newServerCommands.get(i));
+                                            if (playerCommands != null && playerCommands.size() > 0) {
+                                                for (int i = 0; i < playerCommands.size(); i++) {
+                                                    player.performCommand(playerCommands.get(i));
+                                                }
+                                            }
+
+                                            if (warpMessage != null && !Objects.equals(warpMessage, "")) {
+                                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', warpMessage));
                                             }
                                         }
-
-                                        if (playerCommands != null && playerCommands.size() > 0) {
-                                            for (int i = 0; i < playerCommands.size(); i++) {
-                                                player.performCommand(playerCommands.get(i));
-                                            }
-                                        }
-
-                                        if (warpMessage != null && !Objects.equals(warpMessage, "")) {
-                                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', warpMessage));
-                                        }
-                                    }
-                                }, 100);
+                                    }, 100);
+                                } else {
+                                    player.sendMessage("§4§lX §cYou're already warping somewhere. Please wait...");
+                                }
                             } else {
-                                player.sendMessage("§4§lX §cYou're already warping somewhere. Please wait...");
+                                player.closeInventory();
+                                player.sendMessage("§4§lX §cYou don't have permission.");
                             }
                         }
                     }

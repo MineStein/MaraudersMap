@@ -37,6 +37,14 @@ public class MapInventory {
         }
 
         if (section.getStringList("lore") != null) {
+            String requiredPermission = plugin.getConfig().getString("warps." + warp + ".required-permission");
+
+            if (requiredPermission != null && !requiredPermission.equals("")) {
+                lore.add("");
+                lore.add("§cRequired permission:");
+                lore.add("  §4§l" + requiredPermission);
+            }
+
             meta.setLore(lore);
         }
 

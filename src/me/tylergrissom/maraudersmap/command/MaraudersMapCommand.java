@@ -31,7 +31,7 @@ public class MaraudersMapCommand extends CommandBase {
                 "warp-location - stand in the location you want",
                 "discover-region - have a region select with //wand",
                 "warp-message - string",
-                "required-permission - string"
+                "required-permission - string or none"
         };
 
         if (args.length == 0) {
@@ -189,6 +189,18 @@ public class MaraudersMapCommand extends CommandBase {
                                 }
                             } else if (attribute.equalsIgnoreCase("required-permission")) {
                                 // /mm set <warpname> required-permission <permission>
+
+                                if (args.length == 3) {
+                                    plugin.getConfig().set("warps." + warpName + ".required-permission", "");
+
+                                    sender.sendMessage("§e" + warpName + "'s §7required permission has been removed");
+                                } else {
+                                    String permission = args[3];
+
+                                    plugin.getConfig().set("warps." + warpName + ".required-permission", permission);
+
+                                    sender.sendMessage("§e" + warpName + "'s §7required permission has been set to §e" + permission);
+                                }
                             } else {
                                 sender.sendMessage(attributes);
                             }
