@@ -8,7 +8,7 @@ commands:
     aliases: [mm]
 
 permissions:
-  maraudersmap.maraudersmap:
+  maraudersmap.maraudersmap.*:
     description: Superpermission for all /maraudersmap sub-commands
     default: op
     children:
