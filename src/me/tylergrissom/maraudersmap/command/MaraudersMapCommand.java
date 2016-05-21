@@ -11,7 +11,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class MaraudersMapCommand extends CommandBase {
 
@@ -22,10 +24,10 @@ public class MaraudersMapCommand extends CommandBase {
     }
 
     void execute(CommandSender sender, Command command, String[] args) {
-        String[] help = {"§a§l*** §7/maraudersmap §a§l***", "§7/maraudersmap reload - reload configuration file", "§7/maraudersmap discover <player> <warpname> - force discover the warp", "§7/maraudersmap set <warpname> <attribute> [param] - set a warp's attributes", "§7/maraudersmap create <name> - create a new warp"};
+        String[] help = {"§a§l*** §7/maraudersmap §a§l***", "§7/maraudersmap reload - reload configuration file", "§7/maraudersmap discover <player> <warpname> - force discover the warp", "§7/maraudersmap set <warpname> <attribute> [params...] - set a warp's attributes", "§7/maraudersmap create <name> - create a new warp"};
         String[] attributes = {
                 "item - hold an item in your hand",
-                "warp-commands - specify either 'player' or 'console' followed by the command",
+                "warp-commands - specify either 'add' or 'remove' followed by 'player' or 'console' followed by the command",
                 "enabled - boolean",
                 "discoverable - boolean",
                 "warp-location - stand in the location you want",
@@ -102,7 +104,86 @@ public class MaraudersMapCommand extends CommandBase {
                                     sender.sendMessage("§4§lX §cYou have to be a player to perform this command.");
                                 }
                             } else if (attribute.equalsIgnoreCase("warp-commands")) {
+                                // /mm set <warp> warp-commands <add/remove> <player/console> <command...>
 
+                                if (args.length <= 5) {
+                                    sender.sendMessage(attributes);
+                                } else {
+                                    String action = args[3];
+                                    String commandType = args[4];
+
+                                    if ((!action.equalsIgnoreCase("add") && !action.equalsIgnoreCase("remove")) || (!commandType.equalsIgnoreCase("player") && !commandType.equalsIgnoreCase("console"))) {
+                                        sender.sendMessage(attributes);
+                                    } else {
+                                        StringBuilder commandStrBuilder = new StringBuilder();
+
+                                        for (int i = 5; i < args.length; i++) {
+                                            commandStrBuilder.append(args[i]).append(" ");
+                                        }
+
+                                        String commandStr = commandStrBuilder.toString().trim();
+
+                                        if (commandType.equalsIgnoreCase("player")) {
+                                            if (action.equalsIgnoreCase("add")) {
+                                                List<String> commandNodes = plugin.getConfig().getStringList("warps." + warpName + ".warp-commands.player");
+
+                                                if (!commandNodes.contains(commandStr)) {
+                                                    List<String> newCommandNodes = new ArrayList<>(commandNodes);
+
+                                                    newCommandNodes.add(commandStr);
+
+                                                    plugin.getConfig().set("warps." + warpName + ".warp-commands.player", newCommandNodes);
+
+                                                    sender.sendMessage("§7Added the §e'" + commandStr + "' §7player command node to the warp §e'" + warpName + "'");
+                                                } else {
+                                                    sender.sendMessage("§4§lX '" + warpName + "' §calready has the player command node of §4§l'" + commandStr + "'");
+                                                }
+                                            } else {
+                                                List<String> commandNodes = plugin.getConfig().getStringList("warps." + warpName + ".warp-commands.player");
+
+                                                if (commandNodes.contains(commandStr)) {
+                                                    commandNodes.remove(commandStr);
+
+                                                    plugin.getConfig().set("warps." + warpName + ".warp-commands.player", commandNodes);
+
+                                                    sender.sendMessage("§7Removed the §e'" + commandStr + "' §7player command node from §e'" + warpName + "'");
+                                                } else {
+                                                    sender.sendMessage("§4§lX '" + warpName + "' §cdoesn't have the player command node of §4§l'" + commandStr + "'");
+                                                }
+                                            }
+                                        } else if (commandType.equalsIgnoreCase("console")) {
+                                            if (action.equalsIgnoreCase("add")) {
+                                                List<String> commandNodes = plugin.getConfig().getStringList("warps." + warpName + ".warp-commands.console");
+
+                                                if (!commandNodes.contains(commandStr)) {
+                                                    List<String> newCommandNodes = new ArrayList<>(commandNodes);
+
+                                                    newCommandNodes.add(commandStr);
+
+                                                    plugin.getConfig().set("warps." + warpName + ".warp-commands.console", newCommandNodes);
+
+                                                    sender.sendMessage("§7Added the §e'" + commandStr + "' §7console command node to the warp §e'" + warpName + "'");
+                                                } else {
+                                                    sender.sendMessage("§4§lX '" + warpName + "' §calready has the console command node of §4§l'" + commandStr + "'");
+                                                }
+                                            } else {
+                                                List<String> commandNodes = plugin.getConfig().getStringList("warps." + warpName + ".warp-commands.console");
+
+                                                if (commandNodes.contains(commandStr)) {
+                                                    commandNodes.remove(commandStr);
+
+                                                    plugin.getConfig().set("warps." + warpName + ".warp-commands.console", commandNodes);
+
+                                                    sender.sendMessage("§7Removed the §e'" + commandStr + "' §7console command node from §e'" + warpName + "'");
+                                                } else {
+                                                    sender.sendMessage("§4§lX '" + warpName + "' §cdoesn't have the console command node of §4§l'" + commandStr + "'");
+                                                }
+                                            }
+                                        } else {
+                                            sender.sendMessage(attributes);
+                                        }
+                                    }
+                                }
                             } else if (attribute.equalsIgnoreCase("enabled")) {
                                 if (args.length == 3) {
                                     sender.sendMessage(attributes);

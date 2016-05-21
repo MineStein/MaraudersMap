@@ -88,7 +88,7 @@ public class InventoryListener implements Listener {
                                             warpingQueue.remove(player.getUniqueId().toString());
 
                                             String warpMessage = section.getString("warp-message");
-                                            List<String> serverCommands = section.getStringList("warp-commands.server");
+                                            List<String> serverCommands = section.getStringList("warp-commands.console");
                                             List<String> playerCommands = section.getStringList("warp-commands.player");
 
                                             if (serverCommands != null && serverCommands.size() > 0) {
