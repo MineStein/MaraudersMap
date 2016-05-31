@@ -7,6 +7,7 @@ import me.tylergrissom.maraudersmap.command.MaraudersMapCommand;
 import me.tylergrissom.maraudersmap.listener.InventoryListener;
 import me.tylergrissom.maraudersmap.listener.JoinListener;
 import me.tylergrissom.maraudersmap.listener.MovementListener;
+import me.tylergrissom.maraudersmap.listener.SneakListener;
 import me.tylergrissom.maraudersmap.utility.LocationUtility;
 import me.tylergrissom.maraudersmap.utility.WarpUtility;
 import org.bukkit.Bukkit;
@@ -98,6 +99,7 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new JoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryListener(this), this);
         Bukkit.getPluginManager().registerEvents(new MovementListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new SneakListener(this), this);
     }
 
     public void onDisable() {

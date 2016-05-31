@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="Magic-6.0.9">
+  <library name="Magic-6.1.2">
     <CLASSES>
-      <root url="jar://$USER_HOME$/Desktop/1.9 Server/plugins/Magic-6.0.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../1.9 Server/plugins/Magic-6.1.2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

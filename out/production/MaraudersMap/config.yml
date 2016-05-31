@@ -17,7 +17,7 @@ warps:
     warp-commands:
       player:
         - ''
-      server:
+      console:
         - ''
     enabled: true
     discoverable: true

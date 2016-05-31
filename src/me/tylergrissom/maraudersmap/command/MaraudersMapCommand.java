@@ -30,6 +30,7 @@ public class MaraudersMapCommand extends CommandBase {
                 "warp-commands - specify either 'add' or 'remove' followed by 'player' or 'console' followed by the command",
                 "enabled - boolean",
                 "discoverable - boolean",
+                "cancellable - boolean",
                 "warp-location - stand in the location you want",
                 "discover-region - have a region select with //wand",
                 "warp-message - string",
@@ -203,6 +204,16 @@ public class MaraudersMapCommand extends CommandBase {
                                     plugin.getConfig().set("warps." + warpName + ".discoverable", bool);
 
                                     sender.sendMessage("§e" + warpName + "'s §7discoverability has been §e" + (bool ? "enabled" : "disabled"));
+                                }
+                            } else if (attribute.equalsIgnoreCase("cancellable")) {
+                                if (args.length == 3) {
+                                    sender.sendMessage(attributes);
+                                } else {
+                                    boolean bool = Boolean.parseBoolean(args[3]);
+
+                                    plugin.getConfig().set("warps." + warpName + ".cancellable", bool);
+
+                                    sender.sendMessage("§7Warping to §e" + warpName + " §7can §e" + (bool ? "now be cancelled" : "no longer be cancelled"));
                                 }
                             } else if (attribute.equalsIgnoreCase("warp-location")) {
                                 if (sender instanceof Player) {

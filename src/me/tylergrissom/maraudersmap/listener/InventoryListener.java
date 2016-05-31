@@ -23,11 +23,9 @@ import java.util.Objects;
 public class InventoryListener implements Listener {
 
     private Main plugin;
-    private List<String> warpingQueue;
 
     public InventoryListener(Main plugin) {
         this.plugin = plugin;
-        this.warpingQueue = new ArrayList<>();
     }
 
     @EventHandler
@@ -56,9 +54,11 @@ public class InventoryListener implements Listener {
                             String requiredPermission = section.getString("required-permission");
 
                             if (section.getString("required-permission") == null || requiredPermission.equals("") || player.hasPermission(requiredPermission)) {
-                                if (!warpingQueue.contains(player.getUniqueId().toString())) {
+                                if (!plugin.getWarpUtility().getWarpQueue().containsKey(player.getUniqueId().toString())) {
                                     player.closeInventory();
                                     player.sendMessage("§7Warping in §e5 seconds§7...");
+
+                                    if (section.getBoolean("cancellable", true)) player.sendMessage("§7Press §e§l§n§oshift§r §7cancel.");
 
                                     WarpEffect warpEffect = new WarpEffect(plugin.getEffectManager());
 
@@ -74,7 +74,7 @@ public class InventoryListener implements Listener {
 
                                     warpEffect.start();
 
-                                    warpingQueue.add(player.getUniqueId().toString());
+                                    plugin.getWarpUtility().getWarpQueue().put(player.getUniqueId().toString(), str);
 
                                     player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 20, false, false));
                                     player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 100, -20, false, false));
@@ -82,35 +82,38 @@ public class InventoryListener implements Listener {
                                     Bukkit.getScheduler().runTaskLater(plugin, new BukkitRunnable() {
                                         @Override
                                         public void run() {
-                                            player.sendMessage("§7Fast travelling to §e" + ChatColor.translateAlternateColorCodes('&', section.getString("item.display-name")));
-                                            player.teleport(location);
+                                            if (plugin.getWarpUtility().getWarpQueue().containsKey(player.getUniqueId().toString())) {
+                                                player.sendMessage("§7Fast travelling to §e" + ChatColor.translateAlternateColorCodes('&', section.getString("item.display-name")));
 
-                                            warpingQueue.remove(player.getUniqueId().toString());
+                                                player.teleport(location);
 
-                                            String warpMessage = section.getString("warp-message");
-                                            List<String> serverCommands = section.getStringList("warp-commands.console");
-                                            List<String> playerCommands = section.getStringList("warp-commands.player");
+                                                plugin.getWarpUtility().getWarpQueue().remove(player.getUniqueId().toString());
 
-                                            if (serverCommands != null && serverCommands.size() > 0) {
-                                                List<String> newServerCommands = new ArrayList<>();
+                                                String warpMessage = section.getString("warp-message");
+                                                List<String> serverCommands = section.getStringList("warp-commands.console");
+                                                List<String> playerCommands = section.getStringList("warp-commands.player");
 
-                                                for (int i = 0; i < serverCommands.size(); i++) {
-                                                    if (!serverCommands.get(i).equals("")) newServerCommands.add(serverCommands.get(i).replaceAll("%player%", player.getName()));
+                                                if (serverCommands != null && serverCommands.size() > 0) {
+                                                    List<String> newServerCommands = new ArrayList<>();
+
+                                                    for (int i = 0; i < serverCommands.size(); i++) {
+                                                        if (!serverCommands.get(i).equals("")) newServerCommands.add(serverCommands.get(i).replaceAll("%player%", player.getName()));
+                                                    }
+
+                                                    for (int i = 0; i < newServerCommands.size(); i++) {
+                                                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), newServerCommands.get(i));
+                                                    }
                                                 }
 
-                                                for (int i = 0; i < newServerCommands.size(); i++) {
-                                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), newServerCommands.get(i));
+                                                if (playerCommands != null && playerCommands.size() > 0) {
+                                                    for (int i = 0; i < playerCommands.size(); i++) {
+                                                        player.performCommand(playerCommands.get(i));
+                                                    }
                                                 }
-                                            }
 
-                                            if (playerCommands != null && playerCommands.size() > 0) {
-                                                for (int i = 0; i < playerCommands.size(); i++) {
-                                                    player.performCommand(playerCommands.get(i));
+                                                if (warpMessage != null && !Objects.equals(warpMessage, "")) {
+                                                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', warpMessage));
                                                 }
-                                            }
-
-                                            if (warpMessage != null && !Objects.equals(warpMessage, "")) {
-                                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', warpMessage));
                                             }
                                         }
                                     }, 100);

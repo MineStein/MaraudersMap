@@ -1,23 +1,30 @@
 package me.tylergrissom.maraudersmap.utility;
 
 import me.tylergrissom.maraudersmap.Main;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WarpUtility {
 
-    public enum SelectionPoint {
-        POINT_ONE,
+    private Main plugin;
+    private Map<String, String> warpQueue;
 
-        POINT_TWO;
+    public Main getPlugin() {
+        return plugin;
     }
 
-    private Main plugin;
+    public Map<String, String> getWarpQueue() {
+        return warpQueue;
+    }
 
     public WarpUtility(Main plugin) {
         this.plugin = plugin;
+        this.warpQueue = new HashMap<>();
     }
 
     public boolean isWarpValid(String warp) {
@@ -34,6 +41,12 @@ public class WarpUtility {
 
     public boolean warpExists(String warpname) {
         return this.plugin.getConfig().get("warps." + warpname) != null;
+    }
+
+    public ConfigurationSection getWarpConfigurationSection(String warp) {
+        if (warpExists(warp)) return plugin.getConfig().getConfigurationSection("warps." + warp);
+
+        return null;
     }
 
     public void discoverWarp(Player player, String warp) {
