@@ -9,6 +9,7 @@ import me.tylergrissom.maraudersmap.listener.JoinListener;
 import me.tylergrissom.maraudersmap.listener.MovementListener;
 import me.tylergrissom.maraudersmap.listener.SneakListener;
 import me.tylergrissom.maraudersmap.utility.LocationUtility;
+import me.tylergrissom.maraudersmap.utility.TimeUtility;
 import me.tylergrissom.maraudersmap.utility.WarpUtility;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -19,6 +20,7 @@ public class Main extends JavaPlugin {
     private Main plugin;
     private WarpUtility warpUtility;
     private LocationUtility locationUtility;
+    private TimeUtility timeUtility;
     private WorldEditPlugin worldEditPlugin;
     private MagicPlugin magicPlugin;
     private EffectManager effectManager;
@@ -40,6 +42,10 @@ public class Main extends JavaPlugin {
         return this.locationUtility;
     }
 
+    public TimeUtility getTimeUtility() {
+        return timeUtility;
+    }
+
     public EffectManager getEffectManager() {
         return effectManager;
     }
@@ -52,6 +58,7 @@ public class Main extends JavaPlugin {
         this.plugin = this;
         this.warpUtility = new WarpUtility(this);
         this.locationUtility = new LocationUtility(this);
+        this.timeUtility = new TimeUtility(this);
 
         if (Bukkit.getPluginManager().getPlugin("WorldEdit") == null) {
             this.worldEditPlugin = null;

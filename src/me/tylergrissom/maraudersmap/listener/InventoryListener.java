@@ -47,45 +47,38 @@ public class InventoryListener implements Listener {
                         Location location = plugin.getLocationUtility().getLocationFromConfigSection(section.getConfigurationSection("warp-location"));
 
                         if (location == null) {
-                            player.sendMessage("§4§X §cThis location is invalid in the config.yml.");
 
-                            return;
-                        } else {
-                            String requiredPermission = section.getString("required-permission");
 
-                            if (section.getString("required-permission") == null || requiredPermission.equals("") || player.hasPermission(requiredPermission)) {
-                                if (!plugin.getWarpUtility().getWarpQueue().containsKey(player.getUniqueId().toString())) {
-                                    player.closeInventory();
-                                    player.sendMessage("§7Warping in §e5 seconds§7...");
+                                    if (section.getInt("delay") > 0) {
+                                        player.sendMessage("§7Warping in §e" + plugin.getTimeUtility().format(section.getInt("delay")) + "...");
 
-                                    if (section.getBoolean("cancellable", true)) player.sendMessage("§7Press §e§l§n§oshift§r §7cancel.");
+                                        if (section.getBoolean("cancellable", true)) player.sendMessage("§7§e§l§n§oCrouch§r §7to cancel.");
 
-                                    WarpEffect warpEffect = new WarpEffect(plugin.getEffectManager());
+                                        WarpEffect warpEffect = new WarpEffect(plugin.getEffectManager());
 
-                                    warpEffect.duration = 2000;
-                                    warpEffect.period = 3;
-                                    warpEffect.particle = ParticleEffect.FIREWORKS_SPARK;
-                                    warpEffect.particles = 20;
-                                    warpEffect.iterations = 200;
-                                    warpEffect.radius = 1;
-                                    warpEffect.rings = 100;
+                                        warpEffect.duration = 2000;
+                                        warpEffect.period = 3;
+                                        warpEffect.particle = ParticleEffect.FIREWORKS_SPARK;
+                                        warpEffect.particles = 20;
+                                        warpEffect.iterations = 200;
+                                        warpEffect.radius = 1;
+                                        warpEffect.rings = 100;
 
-                                    warpEffect.setEntity(player);
+                                        warpEffect.setEntity(player);
 
-                                    warpEffect.start();
+                                        warpEffect.start();
 
-                                    plugin.getWarpUtility().getWarpQueue().put(player.getUniqueId().toString(), str);
+                                        plugin.getWarpUtility().getWarpQueue().put(player.getUniqueId().toString(), str);
 
-                                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 20, false, false));
-                                    player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 100, -20, false, false));
+                                        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, section.getInt("delay") * 20, 20, false, false));
+                                        player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, section.getInt("delay") * 20, -20, false, false));
+                                    }
 
                                     Bukkit.getScheduler().runTaskLater(plugin, new BukkitRunnable() {
                                         @Override
                                         public void run() {
                                             if (plugin.getWarpUtility().getWarpQueue().containsKey(player.getUniqueId().toString())) {
                                                 player.sendMessage("§7Fast travelling to §e" + ChatColor.translateAlternateColorCodes('&', section.getString("item.display-name")));
-
-                                                player.teleport(location);
 
                                                 plugin.getWarpUtility().getWarpQueue().remove(player.getUniqueId().toString());
 
@@ -116,7 +109,7 @@ public class InventoryListener implements Listener {
                                                 }
                                             }
                                         }
-                                    }, 100);
+                                    }, 20 * section.getInt("delay"));
                                 } else {
                                     player.sendMessage("§4§lX §cYou're already warping somewhere. Please wait...");
                                 }
@@ -129,5 +122,5 @@ public class InventoryListener implements Listener {
                 }
             }
         }
-    }
+
 }

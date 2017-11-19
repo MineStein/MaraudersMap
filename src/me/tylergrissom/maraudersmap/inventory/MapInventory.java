@@ -38,11 +38,26 @@ public class MapInventory {
 
         if (section.getStringList("lore") != null) {
             String requiredPermission = plugin.getConfig().getString("warps." + warp + ".required-permission");
+            int delay = plugin.getConfig().getInt("warps." + warp + ".delay", 0);
+            String delayStr;
 
             if (requiredPermission != null && !requiredPermission.equals("")) {
                 lore.add("");
+
+                if (delay <= 0) {
+                    delayStr = "Instant";
+                } else {
+                    delayStr = plugin.getTimeUtility().format(delay);
+                }
+
+                lore.add("§7Teleport time:");
+                lore.add("  §e§l" + delayStr);
                 lore.add("§cRequired permission:");
                 lore.add("  §4§l" + requiredPermission);
+
+                if (!plugin.getConfig().getBoolean("warps." + warp + ".enabled")) {
+                    lore.add("§4§lDisabled");
+                }
             }
 
             meta.setLore(lore);

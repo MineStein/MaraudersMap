@@ -22,6 +22,7 @@ warps:
     enabled: true
     discoverable: true
     required-permission: ''
+    delay: 0
     warp-location:
       world: 'world'
       x: 0
